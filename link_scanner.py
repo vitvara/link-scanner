@@ -35,10 +35,9 @@ def get_links(url: str) -> list:
         url = a.get_attribute('href')
         if url is None:
             continue
-        if "#" in url:
-            out.append(url.split('#')[0])
-        if "?" in url:
-            out.append(url.split('?')[0])
+        link = url.split('#')[0]
+        link = link.split('?')[0]
+        out.append(link)
     return list(set(out))
     
 
@@ -52,8 +51,11 @@ def is_valid_url(url: str) -> bool:
         bool: False if url is bad
 
     """
+    # bypass bot checker
+    header = {'User-agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5'} 
+    request = urllib.request.Request(url, None, header)
     try:
-        conn = urllib.request.urlopen(url)
+        conn = urllib.request.urlopen(request)
         return True
     except HTTPError:
         return False
@@ -76,6 +78,7 @@ def invalid_urls(url_list: List[str]) -> List[str]:
         if not is_valid_url(url):
             invalid_url_out.append(url)
     return invalid_url_out
+
 
 if __name__ == "__main__":
     import sys
